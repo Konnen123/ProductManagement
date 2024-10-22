@@ -3,7 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ProductManagement.Controller
+namespace ProductManagement.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
@@ -16,9 +16,9 @@ namespace ProductManagement.Controller
         }
 
         [HttpPost]
-        public async Task<ActionResult<Guid>> CreateProduct(CreateProductCommand command)
+        public async Task<ActionResult<Guid>> CreateProduct()
         {
-            throw new NotImplementedException();
+            return Ok("Create product");
         }
     }
 }
