@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Use Cases\QueryHandlers\" />
-    <Folder Include="Use Cases\Queries\" />
   </ItemGroup>
 
   <ItemGroup>
