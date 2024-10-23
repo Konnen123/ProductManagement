@@ -1,4 +1,6 @@
-﻿using Application.Use_Cases.Commands;
+﻿using System.Security.Cryptography;
+using Application.Use_Cases.Commands;
+using Application.Use_Cases.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -18,32 +20,55 @@ namespace ProductManagement.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
-            return Ok("Obtinere de produse");
+            var resultObject = await mediator.Send(new GetProductsQuery());
+            return resultObject.Match<IActionResult>(
+                onSuccess: result => Ok(result),
+                onFailure: error => BadRequest(error)
+            );
         }
         
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetProductById(Guid id)
+        public async Task<IActionResult> GetProductById([FromRoute] Guid id)
         {
-            return Ok($"Obtinerea produsului cu id: {id}");
+            var resultObject = await mediator.Send(new GetProductByIdQuery{Id = id});
+            return resultObject.Match<IActionResult>(
+                onSuccess: result => Ok(result),
+                onFailure: error => BadRequest(error)
+            );
         }
         
         [HttpPost]
-        public async Task<ActionResult> CreateProduct()
+        public async Task<IActionResult> CreateProduct(CreateProductCommand createProductCommand)
         {
-            return Ok("Creare de produs");
+            var resultObject = await mediator.Send(createProductCommand);
+            return resultObject.Match<IActionResult>(
+                onSuccess: result => Ok(result),
+                onFailure: error => BadRequest(error)
+            );
         }
         
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateProduct(Guid id)
+        [HttpPut("id")]
+        public async Task<IActionResult> UpdateProduct(Guid id, UpdateProductCommand command)
         {
-            return Ok($"Actualizare pentru produsul cu id: {id}");
+            if(id != command.Id)
+            {
+                return BadRequest("Id's dont match.");
+            }
+            var resultObject = await mediator.Send(command);
+            return resultObject.Match<IActionResult>(
+                onSuccess: () => NoContent(),
+                onFailure: error => BadRequest(error)
+            );
         }
         
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteProduct(Guid id)
+        public async Task<IActionResult> DeleteProduct(Guid id)
         {
-            return Ok($"Stergerea produsului cu id: {id}");
-
+            var resultObject = await mediator.Send(new DeleteProductCommand { Id = id });
+            return resultObject.Match<IActionResult>(
+                onSuccess: () => NoContent(),
+                onFailure: error => BadRequest(error)
+            );
         }
     }
 }

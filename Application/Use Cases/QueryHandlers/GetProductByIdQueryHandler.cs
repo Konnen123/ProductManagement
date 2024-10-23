@@ -1,6 +1,8 @@
 using Application.DTOs;
+using Application.Errors;
 using Application.Use_Cases.Queries;
 using AutoMapper;
+using Domain.Entities;
 using Domain.Repositories;
 using MediatR;
 
@@ -17,8 +19,18 @@ public class GetProductByIdQueryHandler : IRequestHandler<GetProductByIdQuery, R
         _mapper = mapper;
     }
     
-    public Task<Result<ProductDto>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Result<ProductDto>> Handle(GetProductByIdQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var product = await _productRepository.GetAsync(request.Id);
+            return product is null 
+                ? Result<ProductDto>.Failure(ProductErrors.NotFound(request.Id)) 
+                : Result<ProductDto>.Success(_mapper.Map<ProductDto>(product));
+        }
+        catch (Exception e)
+        {
+            return Result<ProductDto>.Failure(ProductErrors.GetProductFailed(e.Message));
+        }
     }
 }

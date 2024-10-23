@@ -16,13 +16,9 @@ namespace Infrastructure.Repositories
 
         public async Task<Guid> AddAsync(Product product)
         {
-            if( product != null)
-            {
-                await applicationDbContext.Products.AddAsync(product);
-                await applicationDbContext.SaveChangesAsync();
-                return product.Id;
-            }
-            return Guid.Empty;
+            await applicationDbContext.Products.AddAsync(product);
+            await applicationDbContext.SaveChangesAsync();
+            return product.Id;
         }
 
         public async Task DeleteAsync(Guid id)
@@ -48,11 +44,8 @@ namespace Infrastructure.Repositories
 
         public async Task UpdateAsync(Product product)
         {
-            if(product != null)
-            {
-                applicationDbContext.Products.Update(product);
-                await applicationDbContext.SaveChangesAsync();
-            }
+            applicationDbContext.Entry(product).State = EntityState.Modified;
+            await applicationDbContext.SaveChangesAsync();
         }
     }
 }

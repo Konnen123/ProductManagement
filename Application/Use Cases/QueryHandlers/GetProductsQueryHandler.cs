@@ -1,4 +1,5 @@
 using Application.DTOs;
+using Application.Errors;
 using Application.Use_Cases.Queries;
 using AutoMapper;
 using Domain.Repositories;
@@ -17,8 +18,17 @@ public class GetProductsQueryHandler : IRequestHandler<GetProductsQuery, Result<
         _mapper = mapper;
     }
     
-    public Task<Result<IEnumerable<ProductDto>>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
+    public async Task<Result<IEnumerable<ProductDto>>> Handle(GetProductsQuery request, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var products = await _productRepository.GetAllAsync();
+            var productsDto = _mapper.Map<IEnumerable<ProductDto>>(products);
+            return Result<IEnumerable<ProductDto>>.Success(productsDto);
+        }
+        catch (Exception e)
+        {
+            return Result<IEnumerable<ProductDto>>.Failure(ProductErrors.CreateProductFailed(e.Message));
+        }
     }
 }
