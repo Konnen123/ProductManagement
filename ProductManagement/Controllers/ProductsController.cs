@@ -15,10 +15,34 @@ namespace ProductManagement.Controllers
             this.mediator = mediator;
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Guid>> CreateProduct()
+        [HttpGet]
+        public async Task<IActionResult> GetProducts()
         {
-            return Ok("Create product");
+            return Ok("Obtinere de produse");
+        }
+        
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetProductById(Guid id)
+        {
+            return Ok($"Obtinerea produsului cu id: {id}");
+        }
+        
+        [HttpPost]
+        public async Task<ActionResult> CreateProduct()
+        {
+            return Ok("Creare de produs");
+        }
+        
+        [HttpPut("{id}")]
+        public async Task<ActionResult> UpdateProduct(Guid id)
+        {
+            return Ok($"Actualizare pentru produsul cu id: {id}");
+        }
+        
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteProduct(Guid id)
+        {
+            return Ok($"Stergerea produsului cu id: {id}");
         }
     }
 }
