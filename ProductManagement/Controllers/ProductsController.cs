@@ -18,9 +18,6 @@ namespace ProductManagement.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts()
         {
-<<<<<<< HEAD
-            return Ok("Creare de produs");
-=======
             return Ok("Obtinere de produse");
         }
         
@@ -46,7 +43,7 @@ namespace ProductManagement.Controllers
         public async Task<ActionResult> DeleteProduct(Guid id)
         {
             return Ok($"Stergerea produsului cu id: {id}");
->>>>>>> 25eb6ebdb4b476c199a417b6140c691d2fe13753
+
         }
     }
 }
