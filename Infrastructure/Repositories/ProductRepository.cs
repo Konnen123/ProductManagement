@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Domain.Repositories;
 using Infrastructure.Persistance;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories
 {
@@ -15,27 +16,43 @@ namespace Infrastructure.Repositories
 
         public async Task<Guid> AddAsync(Product product)
         {
-            throw new NotImplementedException();
+            if( product != null)
+            {
+                await applicationDbContext.Products.AddAsync(product);
+                await applicationDbContext.SaveChangesAsync();
+                return product.Id;
+            }
+            return Guid.Empty;
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var product = await GetAsync(id);
+            if (product != null)
+            {
+                applicationDbContext.Products.Remove(product);
+                await applicationDbContext.SaveChangesAsync();
+            }
         }
 
         public async Task<IEnumerable<Product>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var products = await applicationDbContext.Products.ToListAsync();
+            return products;
         }
 
-        public async Task<Product> GetAsync(Guid id)
+        public async Task<Product?> GetAsync(Guid id)
         {
-            throw new NotImplementedException();
+            return await applicationDbContext.Products.FindAsync(id);
         }
 
         public async Task UpdateAsync(Product product)
         {
-            throw new NotImplementedException();
+            if(product != null)
+            {
+                applicationDbContext.Products.Update(product);
+                await applicationDbContext.SaveChangesAsync();
+            }
         }
     }
 }

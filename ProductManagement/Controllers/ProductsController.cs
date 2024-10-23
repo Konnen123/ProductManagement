@@ -18,7 +18,7 @@ namespace ProductManagement.Controllers
         [HttpPost]
         public async Task<ActionResult<Guid>> CreateProduct()
         {
-            return Ok("Create product");
+            return Ok("Creare de produs");
         }
     }
 }
