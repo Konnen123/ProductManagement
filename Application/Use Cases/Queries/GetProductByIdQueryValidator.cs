@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Application.Use_Cases.Commands;
+using FluentValidation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,16 +8,7 @@ using System.Threading.Tasks;
 
 namespace Application.Use_Cases.Queries
 {
-    public class GetProductByIdQueryValidator : AbstractValidator<GetProductByIdQuery>
+    public class GetProductByIdQueryValidator : IdValidator<GetProductByIdQuery>
     {
-        public GetProductByIdQueryValidator() 
-        {
-            RuleFor(b => b.Id).NotEmpty().Must(IsValidGuid).WithMessage("Id must be provided.");
-        }
-
-        private bool IsValidGuid(Guid guid)
-        {
-            return Guid.TryParse(guid.ToString(), out _);
-        }
     }
 }

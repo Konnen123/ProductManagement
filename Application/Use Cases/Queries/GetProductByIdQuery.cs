@@ -1,9 +1,9 @@
 using Application.DTOs;
+using Application.Use_Cases.Commands;
 using MediatR;
 
 namespace Application.Use_Cases.Queries;
 
-public class GetProductByIdQuery : IRequest<Result<ProductDto>>
+public class GetProductByIdQuery : IdCommand, IRequest<Result<ProductDto>>
 {
-    public Guid Id { get; set; }
 }
