@@ -40,11 +40,13 @@ namespace ProductManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateProduct(CreateProductCommand createProductCommand)
         {
+            
             var resultObject = await mediator.Send(createProductCommand);
             return resultObject.Match<IActionResult>(
-                onSuccess: result => Ok(result),
+                onSuccess: result => CreatedAtAction(nameof(GetProductById), new {id = result}, result),
                 onFailure: error => BadRequest(error)
             );
+            //
         }
         
         [HttpPut("id")]
