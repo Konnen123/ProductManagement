@@ -14,13 +14,15 @@ namespace Application
         {
             services.AddAutoMapper(typeof(MappingProfile));
             services.AddMediatR(
-                cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
-            services.AddTransient(typeof(IValidator<CreateProductCommand>), typeof(CreateProductCommandValidator));
-            services.AddTransient(typeof(IValidator<UpdateProductCommand>), typeof(UpdateProductCommandValidator));
-            services.AddTransient(typeof(IValidator<DeleteProductCommand>), typeof(DeleteProductCommandValidator));
-            services.AddTransient(typeof(IValidator<GetProductByIdQuery>), typeof(GetProductByIdQueryValidator));
-            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-
+                cfg =>
+                {
+                    cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly());
+                    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+                });
+            
+            //nu e nevoie sa le adaugam pe fiecare manual, asa le adauga pe toate din assembly automat 
+            services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+            
             return services;
         }
 

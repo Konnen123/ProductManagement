@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Use_Cases.CommandHandlers;
 
-public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, Result>
+public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand, Result<Unit>>
 {
     private readonly IProductRepository _productRepository;
 
@@ -14,22 +14,22 @@ public class DeleteProductCommandHandler : IRequestHandler<DeleteProductCommand,
         _productRepository = productRepository;
     }
     
-    public async Task<Result> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Unit>> Handle(DeleteProductCommand request, CancellationToken cancellationToken)
     {
         try
         {
             var product = await _productRepository.GetAsync(request.Id);
             if (product is null)
             {
-                return Result.Failure(ProductErrors.NotFound(request.Id));
+                return Result<Unit>.Failure(ProductErrors.NotFound(request.Id));
             }
 
             await _productRepository.DeleteAsync(product.Id);
-            return Result.Success();
+            return Result<Unit>.Success(Unit.Value);
         }
         catch (Exception e)
         {
-            return Result.Failure(ProductErrors.DeleteProductFailed(e.Message));
+            return Result<Unit>.Failure(ProductErrors.DeleteProductFailed(e.Message));
         }
     }
 }

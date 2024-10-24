@@ -56,7 +56,7 @@ namespace ProductManagement.Controllers
             }
             var resultObject = await mediator.Send(command);
             return resultObject.Match<IActionResult>(
-                onSuccess: () => NoContent(),
+                onSuccess: unit => NoContent(),
                 onFailure: error => BadRequest(error)
             );
         }
@@ -66,7 +66,7 @@ namespace ProductManagement.Controllers
         {
             var resultObject = await mediator.Send(new DeleteProductCommand { Id = id });
             return resultObject.Match<IActionResult>(
-                onSuccess: () => NoContent(),
+                onSuccess: unit => NoContent(),
                 onFailure: error => BadRequest(error)
             );
         }
