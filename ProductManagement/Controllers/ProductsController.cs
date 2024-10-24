@@ -45,8 +45,7 @@ namespace ProductManagement.Controllers
             return resultObject.Match<IActionResult>(
                 onSuccess: result => CreatedAtAction(nameof(GetProductById), new {id = result}, result),
                 onFailure: error => BadRequest(error)
-            );
-            //
+            );       
         }
         
         [HttpPut("id")]
