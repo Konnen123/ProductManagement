@@ -7,7 +7,7 @@ public class Result<T>
         Error = null;
     }
 
-    public Result(Error error)
+    private Result(Error error)
     {
         Error = error;
         Value = default;
