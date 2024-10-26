@@ -35,7 +35,7 @@ namespace ProductManagement.Application.UnitTests
 
             // Assert
             result.Should().NotBeNull();
-            result.Id.ToString().Should().Be(productId.ToString());
+            result.Result.Value.Id.ToString().Should().Be(productId.ToString());
 
         }
 
