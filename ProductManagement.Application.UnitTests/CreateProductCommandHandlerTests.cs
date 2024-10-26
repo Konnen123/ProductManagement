@@ -46,6 +46,56 @@ namespace ProductManagement.Application.UnitTests
             result.Value.Should().Be(product.Id);
         }
 
+        [Fact]
+        public async Task Given_NullMappedProduct_When_HandleIsCalled_Then_ShouldReturnValidationFailedResult()
+        {
+            // Arrange
+            var command = new CreateProductCommand
+            {
+                Name = "Product 1",
+                Price = 10.0m,
+                TVA = 10
+            };
+
+            mapper.Map<Product>(command).Returns((Product)null); 
+            var handler = new CreateProductCommandHandler(repository, mapper);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Description.Should().Be("Product is null");
+        }
+
+        [Fact]
+        public async Task Given_ExceptionThrownInAddAsync_When_HandleIsCalled_Then_ShouldReturnFailureResultWithErrorMessage()
+        {
+            // Arrange
+            var command = new CreateProductCommand
+            {
+                Name = "Product 1",
+                Price = 10.0m,
+                TVA = 7
+            };
+
+            var product = GenerateProduct(command);
+            GenerateProductDto(product);
+
+            repository.AddAsync(product).Returns(Task.FromException<Guid>(new Exception("Database error")));
+            var handler = new CreateProductCommandHandler(repository, mapper);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Description.Should().Be("Database error");
+        }
+
+
         private Product GenerateProduct(CreateProductCommand command)
         {
             return new Product

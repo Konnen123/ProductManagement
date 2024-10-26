@@ -49,6 +49,57 @@ namespace ProductManagement.Application.UnitTests
             await repository.Received(1).UpdateAsync(product);
         }
 
+        [Fact]
+        public async Task Given_NullProduct_When_HandleIsCalled_Then_ShouldReturnValidationFailedResult()
+        {
+            // Arrange
+            var command = new UpdateProductCommand
+            {
+                Id = Guid.NewGuid(),
+                Name = "Updated Product",
+                Price = 15.0m,
+                TVA = 10
+            };
+
+            mapper.Map<Product>(command).Returns((Product)null);
+            var handler = new UpdateProductCommandHandler(repository, mapper);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Description.Should().Be("Product is null");
+        }
+
+        [Fact]
+        public async Task Given_ExceptionThrownInUpdateAsync_When_HandleIsCalled_Then_ShouldReturnFailureResultWithErrorMessage()
+        {
+            // Arrange
+            var command = new UpdateProductCommand
+            {
+                Id = Guid.NewGuid(),
+                Name = "Updated Product",
+                Price = 15.0m,
+                TVA = 10
+            };
+
+            var product = GenerateProduct(command);
+            GenerateProductDto(product);
+
+            repository.UpdateAsync(product).Returns(Task.FromException<Unit>(new Exception("Database error")));
+            var handler = new UpdateProductCommandHandler(repository, mapper);
+
+            // Act
+            var result = await handler.Handle(command, CancellationToken.None);
+
+            // Assert
+            result.Should().NotBeNull();
+            result.IsSuccess.Should().BeFalse();
+            result.Error.Description.Should().Be("Database error"); 
+        }
+
         private Product GenerateProduct(UpdateProductCommand command)
         {
             return new Product
